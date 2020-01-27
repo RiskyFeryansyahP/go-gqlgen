@@ -9,6 +9,17 @@ exec:
   filename: generated.go
 model:
   filename: models_gen.go
+models:
+  User:
+    model: github.com/confus1on/meetmeup/models.User
+    fields:
+      meetups:
+        resolver: true
+  Meetup:
+    model: github.com/confus1on/meetmeup/models.Meetup
+    fields:
+      user:
+        resolver: true
 resolver:
   filename: resolver.go
   type: Resolver
