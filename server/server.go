@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/99designs/gqlgen/handler"
-	go_gqlgen "github.com/confus1on/meetmeup"
 	"github.com/confus1on/meetmeup/ent"
+	go_gqlgen "github.com/confus1on/meetmeup/graphql"
 	"github.com/confus1on/meetmeup/postgres"
 )
 
@@ -38,8 +38,10 @@ func main() {
 		UsersRepo:   postgres.UsersRepository{Client: client},
 	}}
 
+	queryHandler := handler.GraphQL(go_gqlgen.NewExecutableSchema(config))
+
 	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
-	http.Handle("/query", handler.GraphQL(go_gqlgen.NewExecutableSchema(config)))
+	http.Handle("/query", go_gqlgen.DataLoaderMiddleware(context.Background(), client, queryHandler))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
