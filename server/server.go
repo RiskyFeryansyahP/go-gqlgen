@@ -38,6 +38,8 @@ func main() {
 		port = defaultPort
 	}
 
+	userRepo := postgres.UsersRepository{Client: client}
+
 	router := chi.NewRouter()
 
 	router.Use(cors.New(cors.Options{
@@ -48,11 +50,11 @@ func main() {
 
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Logger)
-	router.Use(authMiddleware.AuthMiddleware())
+	router.Use(authMiddleware.AuthMiddleware(userRepo))
 
 	config := go_gqlgen.Config{Resolvers: &go_gqlgen.Resolver{
 		MeetupsRepo: postgres.MeetupsRepository{Client: client},
-		UsersRepo:   postgres.UsersRepository{Client: client},
+		UsersRepo:   userRepo,
 	}}
 
 	queryHandler := handler.GraphQL(go_gqlgen.NewExecutableSchema(config))
