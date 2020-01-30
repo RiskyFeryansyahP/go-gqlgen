@@ -22,12 +22,16 @@ input updateMeetup {
     description: String!
 }
 
+input filterMeetup {
+    name: String
+}
+
 type Mutation {
     createMeetup(input: newMeetup!) : Meetup!
     updateMeetup(id: ID!, input : updateMeetup!) : Meetup!
 }
 
 type Query {
-    meetups: [Meetup!]!
+    meetups(filter: filterMeetup, limit: Int = 10, offset: Int = 0): [Meetup!]!
     user(id: ID!) : User!
 }
