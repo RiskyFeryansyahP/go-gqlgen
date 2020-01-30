@@ -6,10 +6,15 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/99designs/gqlgen/handler"
 	"github.com/confus1on/meetmeup/ent"
 	go_gqlgen "github.com/confus1on/meetmeup/graphql"
+	authMiddleware "github.com/confus1on/meetmeup/middleware"
 	"github.com/confus1on/meetmeup/postgres"
+
+	"github.com/99designs/gqlgen/handler"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
@@ -32,6 +37,18 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
+	router := chi.NewRouter()
+
+	router.Use(cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowCredentials: true,
+		Debug:            true,
+	}).Handler)
+
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+	router.Use(authMiddleware.AuthMiddleware())
 
 	config := go_gqlgen.Config{Resolvers: &go_gqlgen.Resolver{
 		MeetupsRepo: postgres.MeetupsRepository{Client: client},
