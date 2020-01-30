@@ -14,7 +14,7 @@ func (r *Resolver) Mutation() MutationResolver {
 
 type mutationResolver struct{ *Resolver }
 
-func (m *mutationResolver) CreateMeetup(ctx context.Context, input NewMeetup) (*models.Meetup, error) {
+func (m *mutationResolver) CreateMeetup(ctx context.Context, input models.NewMeetup) (*models.Meetup, error) {
 
 	if len(input.Name) < 3 {
 		return nil, errors.New("Name is not long enough!")
@@ -38,7 +38,7 @@ func (m *mutationResolver) CreateMeetup(ctx context.Context, input NewMeetup) (*
 	return meetups, nil
 }
 
-func (m *mutationResolver) UpdateMeetup(ctx context.Context, id int, input UpdateMeetup) (*models.Meetup, error) {
+func (m *mutationResolver) UpdateMeetup(ctx context.Context, id int, input models.UpdateMeetup) (*models.Meetup, error) {
 	if len(input.Name) < 3 {
 		return nil, errors.New("Name is not long enough")
 	}

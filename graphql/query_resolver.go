@@ -13,10 +13,10 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Meetups(ctx context.Context) ([]*models.Meetup, error) {
+func (r *queryResolver) Meetups(ctx context.Context, filter *models.FilterMeetup, limit *int, offset *int) ([]*models.Meetup, error) {
 	var m []*models.Meetup
 
-	meetups, err := r.MeetupsRepo.GetMeetups(ctx)
+	meetups, err := r.MeetupsRepo.GetMeetups(ctx, filter, limit, offset)
 	if err != nil {
 		log.Println("Error when get meetups", err.Error())
 	}
