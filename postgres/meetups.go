@@ -16,10 +16,29 @@ func NewMeetupsRepo(c *ent.Client) *MeetupsRepository {
 	return &MeetupsRepository{Client: c}
 }
 
-func (m *MeetupsRepository) GetMeetups(ctx context.Context) ([]*ent.Meetups, error) {
-	meetups, err := m.Client.Meetups.
+func (m *MeetupsRepository) GetMeetups(ctx context.Context, filter *models.FilterMeetup, limit, offset *int) ([]*ent.Meetups, error) {
+	meetupsQuery := m.Client.Meetups.
 		Query().
-		Order(ent.Asc(meetups.FieldID)).
+		Order(ent.Asc(meetups.FieldID))
+
+	if filter != nil {
+		if filter.Name != nil && *filter.Name != "" {
+			meetupsQuery = meetupsQuery.
+				Where(meetups.NameContains(*filter.Name))
+		}
+	}
+
+	if limit != nil {
+		meetupsQuery = meetupsQuery.
+			Limit(*limit)
+	}
+
+	if offset != nil {
+		meetupsQuery = meetupsQuery.
+			Offset(*offset)
+	}
+
+	meetups, err := meetupsQuery.
 		All(ctx)
 
 	if err != nil {
